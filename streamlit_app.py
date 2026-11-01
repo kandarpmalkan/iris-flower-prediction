@@ -68,7 +68,7 @@ if st.button("Predict Flower 🌼", use_container_width=True):
         with st.spinner("Predicting flower species..."):
 
             response = requests.post(
-                api_url,
+                API_URL,
                 json=input_data,
                 timeout=10
             )
