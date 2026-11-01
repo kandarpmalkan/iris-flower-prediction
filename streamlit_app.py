@@ -3,7 +3,7 @@ import requests
 import os
 
 # Base API URL: read from environment variable or use the deployed FastAPI URL as default
-DEFAULT_API_URL = "https://iris-flower-prediction-a3i4.onrender.com/predict"
+DEFAULT_API_URL = "https://iris-flower-prediction-bgtz.onrender.com/predict"
 raw_url = os.getenv("API_URL") or DEFAULT_API_URL
 raw_url = raw_url.strip().rstrip("/")
 API_URL = raw_url if raw_url.endswith("/predict") else f"{raw_url}/predict"
