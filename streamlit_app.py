@@ -1,9 +1,13 @@
-
 import streamlit as st
 import requests
 import os
 
-API_URL = os.getenv("API_URL")
+# Base API URL: read from environment variable or use the deployed FastAPI URL as default
+DEFAULT_API_URL = "https://iris-flower-prediction-a3i4.onrender.com/predict"
+raw_url = os.getenv("API_URL") or DEFAULT_API_URL
+raw_url = raw_url.strip().rstrip("/")
+API_URL = raw_url if raw_url.endswith("/predict") else f"{raw_url}/predict"
+
 # Page configuration
 st.set_page_config(
     page_title="Iris Flower Predictor",
@@ -60,14 +64,13 @@ if st.button("Predict Flower 🌼", use_container_width=True):
         "petal_width": petal_width
     }
 
-
     try:
-        with st.spinner("Predicting flower species..."):
+        with st.spinner("Connecting to API & predicting flower species (Render free tier may take up to 50s on wake-up)..."):
 
             response = requests.post(
                 API_URL,
                 json=input_data,
-                timeout=10
+                timeout=60
             )
 
         # Check whether the API returned success
@@ -86,12 +89,15 @@ if st.button("Predict Flower 🌼", use_container_width=True):
 
     except requests.exceptions.ConnectionError:
         st.error(
-            "Cannot connect to FastAPI. "
-            "Please start the backend server first."
+            f"Cannot connect to FastAPI backend at '{API_URL}'. "
+            "Please ensure the backend service is running."
         )
 
     except requests.exceptions.Timeout:
-        st.error("The prediction request timed out.")
+        st.error(
+            "The prediction request timed out. "
+            "Note: Render free services go to sleep when inactive. Please try clicking Predict again in 30 seconds."
+        )
 
     except requests.exceptions.RequestException as error:
         st.error(f"API request failed: {error}")
