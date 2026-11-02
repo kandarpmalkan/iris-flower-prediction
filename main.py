@@ -22,6 +22,10 @@ class IrisInput(BaseModel):
 def home():
     return {"message": "Welcome to the Iris Flower Prediction API"}
 
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
 
 # Prediction endpoint
 @app.post("/predict")
